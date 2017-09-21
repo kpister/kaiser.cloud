@@ -11,16 +11,16 @@ class App < Roda
         end
 
         r.get do
-            r.is "about" do
-                view("about")
-            end
-            
-            r.is "contact" do
-                view("contact")
-            end
-
             r.is "resume" do
                 r.redirect "https://bit.ly/2xjjXs4"
+            end
+
+            r.is "github" do
+                r.redirect "https://github.com/kpister"
+            end
+
+            r.is "bitbucket" do
+                r.redirect "https://bitbucket.org/kpister"
             end
 
             r.is "math", Integer, Integer do |a, b|
