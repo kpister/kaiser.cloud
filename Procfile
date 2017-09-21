@@ -1,1 +1,1 @@
-web: puma -C config/puma.rb
+web: rackup config.ru -p 3000
