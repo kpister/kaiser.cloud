@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     erubis (2.7.0)
+    puma (3.10.0)
     rack (2.0.3)
     roda (3.0.0)
       rack
@@ -12,6 +13,7 @@ PLATFORMS
 
 DEPENDENCIES
   erubis
+  puma
   roda
   tilt
 
@@ -19,4 +21,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.15.3
+   1.16.0.pre.2
