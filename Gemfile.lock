@@ -1,0 +1,22 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    erubis (2.7.0)
+    rack (2.0.3)
+    roda (3.0.0)
+      rack
+    tilt (2.0.8)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  erubis
+  roda
+  tilt
+
+RUBY VERSION
+   ruby 2.4.1p111
+
+BUNDLED WITH
+   1.15.3
