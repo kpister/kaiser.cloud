@@ -10,6 +10,7 @@ class App < Roda
             view("homepage")
         end
 
+        # My get requests
         r.get do
             r.is "resume" do
                 r.redirect "https://bit.ly/2xjjXs4"
@@ -28,5 +29,7 @@ class App < Roda
             end
 
         end
+
+        # My post requests
     end
 end
