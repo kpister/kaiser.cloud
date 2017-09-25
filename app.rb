@@ -1,11 +1,14 @@
 require "roda"
 
 class App < Roda
-    plugin :static, ["/images", "/css", "/js"]
+    opts[:root] = File.dirname(__FILE__)
     plugin :render
     plugin :head
+    plugin :public
 
     route do |r|
+        r.public 
+
         r.root do
             view("homepage")
         end
