@@ -1,2 +1,2 @@
-require File.expand_path("../app", __FILE__)
-run App.freeze.app
+require File.expand_path("../cloud", __FILE__)
+run Cloud.app
