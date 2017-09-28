@@ -13,20 +13,7 @@ class Cloud < Roda
         r.public 
 
         r.root do
-            uri = URI.parse('https://api.github.com/users/kpister/events')
-            response = Net::HTTP.get_response(uri)
-            body = response.code == "200" ? JSON.parse(response.body) : "error"
-            @commit_count = 0
-            @commit_messages = []
-            body.each do |event|
-                if event['payload'] && event['payload']['commits']
-                    commits = event['payload']['commits']
-                    commits.each do |commit|
-                        @commit_count += 1
-                        @commit_messages << commit['message']
-                    end
-                end
-            end
+            @info = get_git_info
             view('homepage')
         end
 
@@ -52,4 +39,47 @@ class Cloud < Roda
 
         # My post requests
     end
+end
+
+def call_url(url)
+    uri = URI.parse(url)
+    response = Net::HTTP.get_response(uri)
+    response.code == "200" ? JSON.parse(response.body) : "error"
+end
+
+def get_git_info
+    # Get commit info -- this is only the most recent 30 events. need to grab more pages or table
+    commits_body = call_url('https://api.github.com/users/kpister/events')
+    commit_count = 0
+    commit_messages = []
+    commits_body.each do |event|
+        if event['payload'] && event['payload']['commits']
+            commits = event['payload']['commits']
+            commits.reverse.each do |commit|
+                commit_count += 1
+                commit_messages << commit['message']
+            end
+        end
+    end
+
+    # Get repo info
+    repo_body = call_url('https://api.github.com/users/kpister/repos')
+    star_count = 0
+    repo_count = 0
+    primary_languages_used = []
+    repo_body.each do |repo|
+        if repo['stargazers_count'] > 0
+            star_count += repo['stargazers_count']
+            repo_count += 1
+            primary_languages_used << repo['language']
+        end
+    end
+
+    {
+        commit_count: commit_count, 
+        commit_messages: commit_messages, 
+        star_count: star_count, 
+        repo_count: repo_count, 
+        primary_languages_used: primary_languages_used.uniq.sort
+    }
 end

@@ -1,3 +1,10 @@
 <p>Welcome to this place</p>
-<%= @commit_count %>
-<%= @commit_messages %>
+<%= "Commit count: #{@info[:commit_count]}" %>
+<br>
+<%= "Commit messages: #{@info[:commit_messages]}" %>
+<br>
+<%= "Stars count: #{@info[:star_count]}" %>
+<br>
+<%= "Repo count: #{@info[:repo_count]}" %>
+<br>
+<%= "Primary languages used: #{@info[:primary_languages_used]}" %>
