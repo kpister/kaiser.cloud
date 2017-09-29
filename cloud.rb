@@ -10,10 +10,10 @@ class Cloud < Roda
     plugin :public
 
     route do |r|
+        @info ||= get_git_info
         r.public 
 
         r.root do
-            @info = get_git_info
             view('homepage')
         end
 
@@ -35,16 +35,38 @@ class Cloud < Roda
                 "#{a + b}"
             end
 
+            r.is "gprojects", String do |project|
+                @readme_body = call_url("https://api.github.com/repos/kpister/#{project}/readme", true)
+                view('project')
+            end
+
+
+
         end
 
         # My post requests
     end
 end
 
-def call_url(url)
+def call_url(url, raw=false)
     uri = URI.parse(url)
-    response = Net::HTTP.get_response(uri)
-    response.code == "200" ? JSON.parse(response.body) : "error"
+    respones = ""
+    if raw
+        request = Net::HTTP::Get.new(uri)
+        request["Accept"] = "application/vnd.github.v3.raw+json"
+        
+        req_options = {
+          use_ssl: uri.scheme == "https",
+        }
+        
+        response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+          http.request(request)
+        end
+        response.code == "200" ? response.body : "error"
+    else 
+        response = Net::HTTP.get_response(uri)
+        response.code == "200" ? JSON.parse(response.body) : "error"
+    end
 end
 
 def get_git_info
@@ -66,12 +88,14 @@ def get_git_info
     repo_body = call_url('https://api.github.com/users/kpister/repos')
     star_count = 0
     repo_count = 0
+    repo_names = []
     primary_languages_used = []
     repo_body.each do |repo|
         if repo['stargazers_count'] > 0
             star_count += repo['stargazers_count']
             repo_count += 1
             primary_languages_used << repo['language']
+            repo_names << repo['name']
         end
     end
 
@@ -80,6 +104,7 @@ def get_git_info
         commit_messages: commit_messages, 
         star_count: star_count, 
         repo_count: repo_count, 
-        primary_languages_used: primary_languages_used.uniq.sort
+        primary_languages_used: primary_languages_used.uniq.sort,
+        repo_names: repo_names
     }
 end
