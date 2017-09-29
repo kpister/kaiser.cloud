@@ -62,10 +62,10 @@ def call_url(url, raw=false)
         response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
           http.request(request)
         end
-        response.code == "200" ? response.body : "error"
+        response.code == "200" ? response.body : ["error"]
     else 
         response = Net::HTTP.get_response(uri)
-        response.code == "200" ? JSON.parse(response.body) : "error"
+        response.code == "200" ? JSON.parse(response.body) : ["error"]
     end
 end
 
@@ -74,7 +74,7 @@ def get_git_info
     commits_body = call_url('https://api.github.com/users/kpister/events')
     commit_count = 0
     commit_messages = []
-    commits_body.each do |event|
+    commits_body&.each do |event|
         if event['payload'] && event['payload']['commits']
             commits = event['payload']['commits']
             commits.reverse.each do |commit|
