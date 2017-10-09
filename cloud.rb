@@ -94,7 +94,7 @@ def get_git_info
         if repo['stargazers_count'] > 0
             star_count += repo['stargazers_count']
             repo_count += 1
-            primary_languages_used << repo['language']
+            primary_languages_used << repo['language'] if repo['language']
             repo_names << repo['name']
         end
     end
