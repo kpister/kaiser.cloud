@@ -2,6 +2,13 @@ require 'roda'
 require 'net/http'
 require 'uri'
 require 'json'
+require 'sequel'
+
+database = "myapp_development"
+user     = ENV["PGUSER"]
+password = ENV["PGPASSWORD"]
+DB = Sequel.connect(adapter: "postgres", database: database, host: "127.0.0.1", user: user, password: password)
+@info ||= get_git_info
 
 class Cloud < Roda
     opts[:root] = File.dirname(__FILE__)
@@ -10,7 +17,6 @@ class Cloud < Roda
     plugin :public
 
     route do |r|
-        @info ||= get_git_info
         r.public 
 
         r.root do
