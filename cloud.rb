@@ -4,16 +4,7 @@ require 'uri'
 require 'json'
 require 'sequel'
 require_relative '.cfg.rb'
-
-if CFG[:dev]
-    database = "myapp_development"
-    user     = CFG[:pguser]
-    password = CFG[:pgpassword]
-    DB = Sequel.connect(adapter: "postgres", database: database, host: "127.0.0.1", user: user, password: password)
-    puts DB[:testers].first[:name]
-else 
-    DB = Sequel.connect(ENV['DATABASE_URL'])
-end
+require_relative 'db.rb'
 
 class Cloud < Roda
     opts[:root] = File.dirname(__FILE__)
