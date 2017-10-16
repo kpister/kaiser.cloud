@@ -6,3 +6,4 @@ gem "tilt"
 gem "erubis"
 gem "sequel"
 gem "pg"
+gem 'rake'
