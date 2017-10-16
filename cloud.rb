@@ -3,12 +3,17 @@ require 'net/http'
 require 'uri'
 require 'json'
 require 'sequel'
+require_relative '.cfg.rb'
 
-database = "myapp_development"
-user     = ENV["PGUSER"]
-password = ENV["PGPASSWORD"]
-DB = Sequel.connect(adapter: "postgres", database: database, host: "127.0.0.1", user: user, password: password)
-@info ||= get_git_info
+if CFG[:dev]
+    database = "myapp_development"
+    user     = CFG[:pguser]
+    password = CFG[:pgpassword]
+    DB = Sequel.connect(adapter: "postgres", database: database, host: "127.0.0.1", user: user, password: password)
+    puts DB[:testers].first[:name]
+else 
+    DB = Sequel.connect(ENV['DATABASE_URL'])
+end
 
 class Cloud < Roda
     opts[:root] = File.dirname(__FILE__)
@@ -18,6 +23,7 @@ class Cloud < Roda
 
     route do |r|
         r.public 
+        @info ||= get_git_info
 
         r.root do
             view('homepage')
