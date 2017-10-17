@@ -1,6 +1,6 @@
 require 'sequel'
 
-if ENV['RACK_ENV'] = 'development'
+if ENV['RACK_ENV'] == 'development'
     database = "cloud_dev"
     user     = ENV['USER']
     password = ""
