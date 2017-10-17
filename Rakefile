@@ -1,4 +1,5 @@
 # Migrate
+require_relative 'helpers/github_connector.rb'
 
 migrate = lambda do |version|
     require_relative 'db'
@@ -9,7 +10,7 @@ migrate = lambda do |version|
 end
 
 namespace :migrate do
-desc "Migrate up"
+    desc "Migrate up"
     task :up do
         migrate.call(nil)
     end
@@ -17,7 +18,27 @@ desc "Migrate up"
     task :down do
         migrate.call(0)
     end
+    desc "Bounce migrations"
+    task :bounce do
+        migrate.call(0)
+        migrate.call(nil)
+    end
 end
 
 desc "Migrate up"
 task :migrate => "migrate:up"
+
+namespace :update do
+    namespace :github do
+        desc "Update github commit history"
+        task :commits do
+            update_commit_info
+        end
+
+        desc "Update github repos"
+        task :repos do
+            update_repo_info
+        end
+    end
+end
+

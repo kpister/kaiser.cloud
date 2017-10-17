@@ -3,6 +3,7 @@ require 'uri'
 require 'json'
 require 'time'
 require 'sequel'
+require_relative '../db'
 
 def call_url(url, raw=false)
     uri = URI.parse(url)
@@ -40,7 +41,7 @@ def update_commit_info
     commits_body&.each do |event|
         if event['payload'] && event['payload']['commits']
             event['payload']['commits'].reverse.each do |commit|
-                if prevent_repeat(db_commits_all, 'sha', commit['sha'])
+                if prevent_repeat(db_commits, 'sha', commit['sha'])
                     db_commits.insert(message: commit['message'], 
                                 created_at: Time.parse(event['created_at']), 
                                 sha: commit['sha'], 
