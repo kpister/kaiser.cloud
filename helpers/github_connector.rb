@@ -35,6 +35,14 @@ def prevent_repeat(hash, key, item)
     return true
 end
 
+def add_readme(project)
+    # implement logic to check if I need to make a pull -- via recent commits/time
+    # only store description, authors, todo
+    readme = call_url("https://api.github.com/repos/kpister/#{project}/readme", true)
+    DB[:repos].where(name: project).update(readme: readme)
+    return readme
+end
+
 def update_commit_info
     db_commits = DB[:commits]
     commits_body = call_url('https://api.github.com/users/kpister/events')
@@ -67,27 +75,21 @@ end
 
 def get_git_info
     # Get commit info -- this is only the most recent 30 events. need to grab more pages or table
-    commit_messages = []
     db_commits = DB[:commits]
-    db_commits.each do |commit|
-        commit_messages << commit[:message]
-    end
-
     # Get repo info
     db_repos = DB[:repos]
-    repo_names = []
     primary_languages_used = []
     db_repos.each do |repo|
+        # TODO: parse languages if it is is multiple
         primary_languages_used << repo[:languages] if repo[:languages]
-        repo_names << repo[:name] if repo[:name]
     end
 
     {
         commit_count: db_commits.count, 
-        commit_messages: commit_messages, 
+        commit_messages: db_commits.map(:message), 
         star_count: db_repos.sum(:stars), 
         repo_count: db_repos.count, 
         primary_languages_used: primary_languages_used.uniq.sort,
-        repo_names: repo_names
+        repo_names: db_repos.map(:name)
     }
 end

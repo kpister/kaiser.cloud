@@ -36,7 +36,7 @@ class Cloud < Roda
             end
 
             r.is "gprojects", String do |project|
-                @readme_body = call_url("https://api.github.com/repos/kpister/#{project}/readme", true)
+                @readme = add_readme(project)
                 view('project')
             end
         end
