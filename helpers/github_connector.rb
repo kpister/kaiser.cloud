@@ -34,28 +34,30 @@ def prevent_repeat(hash, key, item)
     return true
 end
 
-def get_git_info
-    # Get commit info -- this is only the most recent 30 events. need to grab more pages or table
-    commits_body = call_url('https://api.github.com/users/kpister/events')
-    commit_count = 0
-    commit_messages = []
+def update_git_info
     db_commits = DB[:commits]
-    db_commits_all = db_commits.select(:sha)
+    commits_body = call_url('https://api.github.com/users/kpister/events')
     commits_body&.each do |event|
         if event['payload'] && event['payload']['commits']
-            commits = event['payload']['commits']
-            commits.reverse.each do |commit|
+            event['payload']['commits'].reverse.each do |commit|
                 if prevent_repeat(db_commits_all, 'sha', commit['sha'])
                     db_commits.insert(message: commit['message'], 
                                 created_at: Time.parse(event['created_at']), 
                                 sha: commit['sha'], 
                                 repo_id: event['repo']['id'])
                 end
-
-                commit_count += 1
-                commit_messages << commit['message']
             end
         end
+    end
+end
+
+
+def get_git_info
+    # Get commit info -- this is only the most recent 30 events. need to grab more pages or table
+    commit_messages = []
+    db_commits = DB[:commits]
+    db_commits.each do |commit|
+        commit_messages << commit[:message]
     end
 
     # Get repo info
@@ -74,7 +76,7 @@ def get_git_info
     end
 
     {
-        commit_count: commit_count, 
+        commit_count: db_commits.count, 
         commit_messages: commit_messages, 
         star_count: star_count, 
         repo_count: repo_count, 

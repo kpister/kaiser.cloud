@@ -39,9 +39,6 @@ class Cloud < Roda
                 @readme_body = call_url("https://api.github.com/repos/kpister/#{project}/readme", true)
                 view('project')
             end
-
-
-
         end
 
         # My post requests
