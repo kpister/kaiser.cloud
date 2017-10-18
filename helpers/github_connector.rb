@@ -86,7 +86,7 @@ def get_git_info
 
     {
         commit_count: db_commits.count, 
-        commit_messages: db_commits.map(:message), 
+        commit_messages: db_commits.order(:created_at).map(:message).reverse,
         star_count: db_repos.sum(:stars), 
         repo_count: db_repos.count, 
         primary_languages_used: primary_languages_used.uniq.sort,
