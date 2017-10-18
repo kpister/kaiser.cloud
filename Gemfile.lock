@@ -3,6 +3,7 @@ GEM
   specs:
     erubis (2.7.0)
     pg (0.21.0)
+    puma (3.10.0)
     rack (2.0.3)
     rake (12.1.0)
     roda (3.0.0)
@@ -16,6 +17,7 @@ PLATFORMS
 DEPENDENCIES
   erubis
   pg
+  puma
   rake
   roda
   sequel

@@ -7,3 +7,4 @@ gem "erubis"
 gem "sequel"
 gem "pg"
 gem 'rake'
+gem 'puma'
