@@ -8,6 +8,7 @@ rackup      DefaultRackup
 port        ENV['PORT']     || 9292
 environment ENV['RACK_ENV'] || 'development'
 
-on_worker_boot do
-    require_relative 'db'
-end
+timeout 20
+
+require_relative 'db'
+

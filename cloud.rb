@@ -1,5 +1,5 @@
 require 'roda'
-require_relative 'db.rb'
+require_relative 'db'
 require_relative 'models/commit.rb'
 require_relative 'helpers/github_connector.rb'
 
