@@ -75,7 +75,7 @@ end
 
 def get_git_info
     # Get commit info -- this is only the most recent 30 events. need to grab more pages or table
-    db_commits = DB[:commits]
+    db_commits = DB[:commits].order(:created_at).reverse
     # Get repo info
     db_repos = DB[:repos]
     primary_languages_used = []
@@ -85,11 +85,14 @@ def get_git_info
     end
 
     {
-        commit_count: db_commits.count, 
-        commit_messages: db_commits.order(:created_at).map(:message).reverse,
+
+        commits: db_commits,
+        repos: db_repos,
         star_count: db_repos.sum(:stars), 
         repo_count: db_repos.count, 
         primary_languages_used: primary_languages_used.uniq.sort,
-        repo_names: db_repos.map(:name)
+        repo_names: db_repos.map(:name),
+        latest_commit: "#{Date::ABBR_MONTHNAMES[db_commits.first[:created_at].month]}-#{db_commits.first[:created_at].day}"
+
     }
 end

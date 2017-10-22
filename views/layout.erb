@@ -8,24 +8,20 @@
         <link rel="shortcut icon" href="/favicon.ico" />
 
         <title>Kaiser Pister</title>
-
+        <link rel="stylesheet" href="https://unpkg.com/tachyons@4.8.1/css/tachyons.min.css"/>
+        
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 
     </head>
     <body>
-        <nav class="navbar navbar-default">
-            <div class="container">
-                <ul class="nav navbar-nav">
-                    <li><a href="/">Kaiser Cloud</a></li>
-                    <% @info[:repo_names].each do |repo_name| %>
-                        <li>
-                            <a href=<%= "/gprojects/#{repo_name}" %>><%= repo_name %></a>
-                        </li>
-                    <% end %>
-                </ul>
-            </div>
-        </nav>
+
         <div class="container">
+            <nav class="pa3 pa4-ns">
+                <a class="link dim black b f6 f5-ns dib mr3" href="/" title="Home">Repos: </a>
+                <% @info[:repo_names].each do |repo_name| %>
+                    <a class="link dim gray    f6 f5-ns dib mr3" href= <%= "/gprojects/#{repo_name}" %>><%= repo_name %></a>
+                <% end %>
+            </nav>
             <%= yield %>
         </div>
         <div class="footer navbar-fixed-bottom">
