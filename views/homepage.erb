@@ -1,5 +1,5 @@
 <article class="cf">
-    <div class="fl w-70 bg-near-white tc">
+    <div class="fl w-100 w-70-ns bg-near-white tc">
         <article class="pa3 pa5-ns" data-name="slab-stat">
         <h1>Kaiser in code</h1>
         <dl class="dib mr5">
@@ -24,8 +24,11 @@
         </dl>
         </article>
     </div>
-    <div class="fl w-30 bg-near-white tc">
-        <div class="pa4">
+    <div class="fl w-100 w-30-ns bg-near-white tc">
+        <h1 class="fw6 f3 lh-copy mt3">
+            Recent Commits
+        </h1>
+        <div class="pa3">
         <div class="overflow-auto">
         <table class="f6 w-100 mw8 center" cellspacing="0">
             <thead>
@@ -37,11 +40,11 @@
             </tr>
             </thead>
             <tbody class="lh-copy">
-                <% @info[:commits].limit(15).each do |commit| %>
+                <% @info[:commits].limit(20).each do |commit| %>
                     <tr class="stripe-dark">
                         <td class="pa3"><%= @info[:repos].where(id: commit[:repo_id]).first[:name] %></td>
                         <td class="pa3"><%= commit[:message] %></td>
-                        <td class="pa3"><%= Date::ABBR_MONTHNAMES[commit[:created_at].month]+"-"+commit[:created_at].day.to_s %></td>
+                        <td class="pa1"><%= Date::ABBR_MONTHNAMES[commit[:created_at].month]+"-"+commit[:created_at].day.to_s %></td>
                         <td class="pa3">
                             <a href=<%="https://github.com/kpister/#{@info[:repos].where(id: commit[:repo_id]).first[:name]}/commit/#{commit[:sha]}"%> target="_blank"><%= commit[:sha][0,7] %></a> 
                         </td>
