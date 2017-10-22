@@ -1,29 +1,104 @@
 <article class="cf">
     <div class="fl w-100 w-70-l bg-near-white tc">
+
+        <!-- The stats block at the top -->
         <article class="pa3 pa5-ns" data-name="slab-stat">
-        <h1>Kaiser in code</h1>
-        <dl class="dib mr5">
-        <dd class="f6 f5-ns b ml0">Total Commits</dd>
-        <dd class="f3 f2-ns b ml0"><%= @info[:commits].count %></dd>
-        </dl>
-        <dl class="dib mr5">
-        <dd class="f6 f5-ns b ml0">Stars</dd>
-        <dd class="f3 f2-ns b ml0"><%= @info[:star_count] %></dd>
-        </dl>
-        <dl class="dib mr5">
-        <dd class="f6 f5-ns b ml0">Most Recent Activity</dd>
-        <dd class="f3 f2-ns b ml0"><%= @info[:latest_commit] %></dd>
-        </dl>
-        <dl class="dib mr5">
-        <dd class="f6 f5-ns b ml0">Repo Count</dd>
-        <dd class="f3 f2-ns b ml0"><%= @info[:repo_count] %></dd>
-        </dl>
-        <dl class="dib">
-        <dd class="f6 f5-ns b ml0">Favorite Languages</dd>
-        <dd class="f3 f2-ns b ml0"><%= @info[:primary_languages_used] %></dd>
-        </dl>
+            <h1>Kaiser in code</h1>
+            <dl class="dib mr5">
+                <dd class="f6 f5-ns b ml0">Total Commits</dd>
+                <dd class="f3 f2-ns b ml0"><%= @info[:commits].count %></dd>
+            </dl>
+            <dl class="dib mr5">
+                <dd class="f6 f5-ns b ml0">Stars</dd>
+                <dd class="f3 f2-ns b ml0"><%= @info[:star_count] %></dd>
+            </dl>
+            <dl class="dib mr5">
+                <dd class="f6 f5-ns b ml0">Most Recent Activity</dd>
+                <dd class="f3 f2-ns b ml0"><%= @info[:latest_commit] %></dd>
+            </dl>
+            <dl class="dib mr5">
+                <dd class="f6 f5-ns b ml0">Repo Count</dd>
+                <dd class="f3 f2-ns b ml0"><%= @info[:repo_count] %></dd>
+            </dl>
+            <dl class="dib">
+                <dd class="f6 f5-ns b ml0">Favorite Languages</dd>
+                <dd class="f3 f2-ns b ml0"><%= @info[:primary_languages_used] %></dd>
+            </dl>
         </article>
+
+        <h1 class="fw6 f3 lh-copy mt3">
+            My Favorite Projects
+        </h1>
+        <!-- The projects section -->
+        <section class="cf">
+            <div class="fl w-100 w-33-l bg-near-white tc">
+                <article class="mw6 center bg-white br3 pa3 pa4-ns mv3 ba b--black-10">
+                    <div class="tc">
+                        <img src="../images/mini_c_compiler.png" class="br-100 h4 w4 dib" title="Mini C Compiler">
+                        <h1 class="f4">Mini C Compiler</h1>
+                        <hr class="mw3 bb bw1 b--black-10">
+                    </div>
+                    <p class="lh-copy measure center f4 black-70">
+                        A compiler for a subset of the C language.
+                        It was developed as part of a course at the University of Edinburgh.
+                        The project was written almost entirely in Java, and outputs a MIPS file which can be run in the MARS emulator.
+
+                        This is one of the coolest projects I have accomplished, and in particular I enjoyed the connections we made to the linguistic side of Computer Science. 
+                        As a result of this project, I am now pursuing research in PL.
+                    </p>
+                    <p class="lh-copy measure center f5 black-70">
+                        This project must remain private for academic reasons, however if you are interested, shoot me an email: pisterk@gmail.com
+                    </p>
+                </article>
+            </div>
+            <div class="fl w-100 w-33-l bg-near-white tc">
+                <article class="mw6 center bg-white br3 pa3 pa4-ns mv3 ba b--black-10">
+                    <div class="tc">
+                        <img src="../images/graphics.png" class="br-100 h4 w4 dib" title="Graphics">
+                        <h1 class="f4">Graphics Projects</h1>
+                        <hr class="mw3 bb bw1 b--black-10">
+                    </div>
+                    <p class="lh-copy measure center f4 black-70">
+                        At UCSD, I have developed multiple graphics projects including:
+                    </p>
+                    <p class="lh-copy measure center f4 black-70">
+                        A recursive raytracer. Using 3D object files and scene lighting, I render beautiful images in almost lifelike images.
+                        I originally wrote this in C++, but am in the process of porting it to Go to further improve performance.
+                    </p>
+                    <p class="lh-copy measure center f4 black-70">
+                        A progressive mesh viewer. After reading in .off files, I render in real time a 3D mesh.
+                        The user can interact with the mesh through normal transformation as well as mesh decimation and progression.
+                    </p>
+                </article> 
+            </div>
+            <div class="fl w-100 w-33-l bg-near-white tc">
+                <article class="mw6 center bg-white br3 pa3 pa4-ns mv3 ba b--black-10">
+                    <div class="tc">
+                        <img src="../images/ruby.png" class="br-100 h4 w4 dib" title="Ruby">
+                        <h1 class="f4">Ethnio and Ruby</h1>
+                        <hr class="mw3 bb bw1 b--black-10">
+                    </div>
+                    <p class="lh-copy measure center f4 black-70">
+                        Working as a Junior Ruby on Rails Engineer at Ethnio was an eye-opening experience.
+                    </p>
+                    <p class="lh-copy measure center f4 black-70">
+                        As one of six members in the company, I operated in many parts of the app.
+                        By the end, I worked on improving security, 
+                        managing and acquiring engagement statistics, 
+                        updating old code and libraries, 
+                        migrating to a new webserver, 
+                        and working with the CEO to design new features.
+                    </p>
+                    <p class="lh-copy measure center f4 black-70">
+                        I learned a lot of valuable lessons, and used much of that knowledge creating this website!
+                    </p>
+                </article> 
+            </div>
+        </section>
+
     </div>
+
+    <!-- The commit history section -->
     <div class="fl w-100 w-30-l bg-near-white tc">
         <h1 class="fw6 f3 lh-copy mt3">
             Recent Commits
@@ -43,7 +118,7 @@
                 <% @info[:commits].limit(20).each do |commit| %>
                     <tr class="stripe-dark">
                         <td class="pa3"><%= @info[:repos].where(id: commit[:repo_id]).first[:name] %></td>
-                        <td class="pa3"><%= commit[:message] %></td>
+                        <td class="pa3"><%= (commit[:message].length > 30) ? commit[:message][0,27] + "..." : commit[:message] %></td>
                         <td class="pa1"><%= Date::ABBR_MONTHNAMES[commit[:created_at].month]+"-"+commit[:created_at].day.to_s %></td>
                         <td class="pa3">
                             <a href=<%="https://github.com/kpister/#{@info[:repos].where(id: commit[:repo_id]).first[:name]}/commit/#{commit[:sha]}"%> target="_blank"><%= commit[:sha][0,7] %></a> 
