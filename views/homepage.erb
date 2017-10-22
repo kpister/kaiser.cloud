@@ -31,7 +31,7 @@
         </h1>
         <!-- The projects section -->
         <section class="cf">
-            <div class="fl w-100 w-33-l bg-near-white tc">
+            <div class="fl w-100 w-33-l bg-near-white tc ph1">
                 <article class="mw6 center bg-white br3 pa3 pa4-ns mv3 ba b--black-10">
                     <div class="tc">
                         <img src="../images/mini_c_compiler.png" class="br-100 h4 w4 dib" title="Mini C Compiler">
@@ -51,7 +51,7 @@
                     </p>
                 </article>
             </div>
-            <div class="fl w-100 w-33-l bg-near-white tc">
+            <div class="fl w-100 w-33-l bg-near-white tc ph1">
                 <article class="mw6 center bg-white br3 pa3 pa4-ns mv3 ba b--black-10">
                     <div class="tc">
                         <img src="../images/graphics.png" class="br-100 h4 w4 dib" title="Graphics">
@@ -69,9 +69,10 @@
                         A progressive mesh viewer. After reading in .off files, I render in real time a 3D mesh.
                         The user can interact with the mesh through normal transformation as well as mesh decimation and progression.
                     </p>
+                    <br>
                 </article> 
             </div>
-            <div class="fl w-100 w-33-l bg-near-white tc">
+            <div class="fl w-100 w-33-l bg-near-white tc ph1">
                 <article class="mw6 center bg-white br3 pa3 pa4-ns mv3 ba b--black-10">
                     <div class="tc">
                         <img src="../images/ruby.png" class="br-100 h4 w4 dib" title="Ruby">
@@ -115,7 +116,7 @@
             </tr>
             </thead>
             <tbody class="lh-copy">
-                <% @info[:commits].limit(20).each do |commit| %>
+                <% @info[:commits].limit(50).each do |commit| %>
                     <tr class="stripe-dark">
                         <td class="pa3"><%= @info[:repos].where(id: commit[:repo_id]).first[:name] %></td>
                         <td class="pa3"><%= (commit[:message].length > 30) ? commit[:message][0,27] + "..." : commit[:message] %></td>
