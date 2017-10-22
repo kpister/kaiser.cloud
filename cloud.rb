@@ -1,6 +1,5 @@
 require 'roda'
-require_relative 'db'
-require_relative 'models/commit.rb'
+require_relative 'models'
 require_relative 'helpers/github_connector.rb'
 
 class Cloud < Roda

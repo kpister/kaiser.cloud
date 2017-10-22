@@ -8,3 +8,4 @@ gem "sequel"
 gem "pg"
 gem 'rake'
 gem 'puma'
+gem 'rack-unreloader'
