@@ -10,7 +10,7 @@
             </dl>
             <dl class="dib mr5">
                 <dd class="f6 f5-ns b ml0">Stars</dd>
-                <dd class="f3 f2-ns b ml0"><%= @info[:star_count] %></dd>
+                <dd class="f3 f2-ns b ml0"><%= @info[:repos].sum(:stars) %></dd>
             </dl>
             <dl class="dib mr5">
                 <dd class="f6 f5-ns b ml0">Most Recent Activity</dd>
@@ -18,11 +18,11 @@
             </dl>
             <dl class="dib mr5">
                 <dd class="f6 f5-ns b ml0">Repo Count</dd>
-                <dd class="f3 f2-ns b ml0"><%= @info[:repo_count] %></dd>
+                <dd class="f3 f2-ns b ml0"><%= @info[:repos].count %></dd>
             </dl>
             <dl class="dib">
-                <dd class="f6 f5-ns b ml0">Favorite Languages</dd>
-                <dd class="f3 f2-ns b ml0"><%= @info[:primary_languages_used] %></dd>
+                <dd class="f6 f5-ns b ml0">Most Used Languages</dd>
+                <dd class="f3 f2-ns b ml0">Go, C++, Ruby</dd>
             </dl>
         </article>
 
@@ -62,7 +62,7 @@
                         At UCSD, I have developed multiple graphics projects including:
                     </p>
                     <p class="lh-copy measure center f4 black-70">
-                        A recursive raytracer. Using 3D object files and scene lighting, I render beautiful images in almost lifelike images.
+                        A recursive raytracer. Using 3D object files and scene lighting, I render beautiful images in almost lifelike quality.
                         I originally wrote this in C++, but am in the process of porting it to Go to further improve performance.
                     </p>
                     <p class="lh-copy measure center f4 black-70">

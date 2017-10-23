@@ -27,12 +27,12 @@ def call_url(url, raw=false)
 end
 
 def prevent_repeat(hash, key, item)
-    hash.each do |inner_hash|
-        if inner_hash[key.to_sym] == item
-            return false
+    hash.each do |record|
+        if record[key.to_sym] == item
+            return record
         end
     end
-    return true
+    return nil
 end
 
 def add_readme(project)
@@ -49,11 +49,12 @@ def update_commit_info
     commits_body&.each do |event|
         if event['payload'] && event['payload']['commits']
             event['payload']['commits'].reverse.each do |commit|
-                if prevent_repeat(db_commits, 'sha', commit['sha'])
+                unless prevent_repeat(db_commits, 'sha', commit['sha'])
                     db_commits.insert(message: commit['message'], 
                                 created_at: Time.parse(event['created_at']), 
                                 sha: commit['sha'], 
-                                repo_id: event['repo']['id'])
+                                repo_id: event['repo']['id'],
+                                author: "Kaiser")
                 end
             end
         end
@@ -64,11 +65,29 @@ def update_repo_info
     db_repos = DB[:repos]
     repo_body = call_url('https://api.github.com/users/kpister/repos')
     repo_body.each do |repo|
-        if repo['stargazers_count'] > 0 && prevent_repeat(db_repos, 'id', repo['id'])
-            db_repos.insert(id: repo['id'], 
-                            name: repo['name'], 
-                            languages: repo['language'], 
-                            stars: repo['stargazers_count'])
+        if repo['stargazers_count'] > 0
+            record = prevent_repeat(db_repos, 'id', repo['id'])
+            languages = call_url("https://api.github.com/repos/kpister/#{repo['name']}/languages")
+            contributors = call_url("https://api.github.com/repos/kpister/#{repo['name']}/contributors")
+            authors = []
+            contributors.each do |contributor|
+                authors << contributor["login"] if contributor['contributions'] > 2
+            end
+
+            # TODO grab commits
+            if record
+                repo.update(languages: languages.keys.to_s)
+                repo.update(authors: authors.to_s)
+                repo.update(stars: repo['stargazers_count'])
+                repo.update(updated_at: repo['pushed_at'])
+            else
+                db_repos.insert(id: repo['id'], 
+                                name: repo['name'], 
+                                languages: languages.keys.to_s.tr('[]"', ''),
+                                stars: repo['stargazers_count'],
+                                updated_at: repo['pushed_at'],
+                                authors: authors.to_s.tr('[]"', ''))
+            end
         end
     end
 end
@@ -78,19 +97,11 @@ def get_git_info
     db_commits = DB[:commits].order(:created_at).reverse
     # Get repo info
     db_repos = DB[:repos]
-    primary_languages_used = []
-    db_repos.each do |repo|
-        # TODO: parse languages if it is is multiple
-        primary_languages_used << repo[:languages] if repo[:languages]
-    end
 
     {
 
         commits: db_commits,
         repos: db_repos,
-        star_count: db_repos.sum(:stars), 
-        repo_count: db_repos.count, 
-        primary_languages_used: primary_languages_used.uniq.sort,
         repo_names: db_repos.map(:name),
         latest_commit: "#{Date::ABBR_MONTHNAMES[db_commits.first[:created_at].month]}-#{db_commits.first[:created_at].day}"
 

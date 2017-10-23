@@ -1,1 +1,63 @@
-<%= "#{@readme}" %>
+<article class="cf">
+<div class="fl w-100 w-70-l bg-near-white tc">
+
+    <!-- The stats block at the top -->
+    <article class="pa3 pa5-ns" data-name="slab-stat">
+        <h1><%= @repo[:name] %></h1>
+        <dl class="dib mr5">
+            <dd class="f6 f5-ns b ml0">Total Commits</dd>
+            <dd class="f3 f2-ns b ml0"><%= @commits.count %></dd>
+        </dl>
+        <dl class="dib mr5">
+            <dd class="f6 f5-ns b ml0">Stars</dd>
+            <dd class="f3 f2-ns b ml0"><%= @repo[:stars] %></dd>
+        </dl>
+        <dl class="dib mr5">
+            <dd class="f6 f5-ns b ml0">Most Recent Activity</dd>
+            <dd class="f3 f2-ns b ml0"><%= Date::ABBR_MONTHNAMES[@repo[:updated_at].month]+"-"+@repo[:updated_at].day.to_s %></dd>
+        </dl>
+        <dl class="dib mr5">
+            <dd class="f6 f5-ns b ml0">Authors</dd>
+            <dd class="f3 f2-ns b ml0"><%= @repo[:authors] if @repo[:authors] %></dd>
+        </dl>
+        <dl class="dib">
+            <dd class="f6 f5-ns b ml0">Languages</dd>
+            <dd class="f3 f2-ns b ml0"><%= @repo[:languages] if @repo[:languages] %></dd>
+        </dl>
+    </article>
+
+</div>
+
+<!-- The commit history section -->
+<div class="fl w-100 w-30-l bg-near-white tc">
+    <h1 class="fw6 f3 lh-copy mt3">
+        Recent Commits
+    </h1>
+    <div class="pa3">
+    <div class="overflow-auto">
+    <table class="f6 w-100 mw6 center" cellspacing="0" align="center">
+        <thead>
+        <tr class="stripe-dark">
+            <th class="fw6 tc pa3 bg-white">Author</th>
+            <th class="fw6 tc pa3 bg-white">Message</th>
+            <th class="fw6 tc pa3 bg-white">Date</th>
+            <th class="fw6 tc pa3 bg-white">Sha</th>
+        </tr>
+        </thead>
+        <tbody class="lh-copy">
+            <% @commits.limit(50).each do |commit| %>
+                <tr class="stripe-dark">
+                    <td class="pa3"><%= commit[:author] %></td>
+                    <td class="pa3"><%= (commit[:message].length > 30) ? commit[:message][0,27] + "..." : commit[:message] %></td>
+                    <td class="pa1"><%= Date::ABBR_MONTHNAMES[commit[:created_at].month]+"-"+commit[:created_at].day.to_s %></td>
+                    <td class="pa3">
+                        <a href=<%="https://github.com/kpister/#{@repo[:name]}/commit/#{commit[:sha]}"%> target="_blank"><%= commit[:sha][0,7] %></a> 
+                    </td>
+                </tr>
+            <%end%>
+        </tbody>
+    </table>
+    </div>
+    </div>
+</div>
+</article>

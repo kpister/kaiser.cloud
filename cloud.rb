@@ -36,7 +36,8 @@ class Cloud < Roda
             end
 
             r.is "gprojects", String do |project|
-                @readme = add_readme(project)
+                @repo = DB[:repos].where(name: project).first
+                @commits = DB[:commits].where(repo_id: @repo[:id])
                 view('project')
             end
         end
