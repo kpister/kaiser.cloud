@@ -22,7 +22,7 @@
         </dl>
         <dl class="dib">
             <dd class="f6 f5-ns b ml0">Languages</dd>
-            <dd class="f3 f2-ns b ml0"><%= @repo[:languages] if @repo[:languages] %></dd>
+            <dd class="f3 f2-ns b ml0"><%= (@repo[:languages] != "") ? @repo[:languages] : "English" %></dd>
         </dl>
     </article>
 

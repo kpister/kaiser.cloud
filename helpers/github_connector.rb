@@ -63,18 +63,38 @@ end
 
 def update_repo_info
     db_repos = DB[:repos]
+    db_commits = DB[:commits]
+
     repo_body = call_url('https://api.github.com/users/kpister/repos')
+
+    # for every repo...
     repo_body.each do |repo|
+        # ... that I have starred
         if repo['stargazers_count'] > 0
+            # check if it exists already
             record = prevent_repeat(db_repos, 'id', repo['id'])
+
+            # update languages, authors and commits
             languages = call_url("https://api.github.com/repos/kpister/#{repo['name']}/languages")
             contributors = call_url("https://api.github.com/repos/kpister/#{repo['name']}/contributors")
+            commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits")
+            commits.each do |commit|
+                unless prevent_repeat(db_commits, 'sha', commit['sha'])
+                    db_commits.insert(
+                        message: commit['commit']['message'],
+                        sha: commit['sha'],
+                        repo_id: repo['id'],
+                        created_at: commit['commit']['author']['date'],
+                        author: commit['commit']['author']['name']
+                    )
+                end
+            end
+
             authors = []
             contributors.each do |contributor|
                 authors << contributor["login"] if contributor['contributions'] > 2
             end
 
-            # TODO grab commits
             if record
                 repo.update(languages: languages.keys.to_s)
                 repo.update(authors: authors.to_s)

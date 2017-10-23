@@ -116,7 +116,7 @@
             </tr>
             </thead>
             <tbody class="lh-copy">
-                <% @info[:commits].limit(50).each do |commit| %>
+                <% @info[:commits].where(author: 'Kaiser Pister').limit(50).each do |commit| %>
                     <tr class="stripe-dark">
                         <td class="pa3"><%= @info[:repos].where(id: commit[:repo_id]).first[:name] %></td>
                         <td class="pa3"><%= (commit[:message].length > 30) ? commit[:message][0,27] + "..." : commit[:message] %></td>
