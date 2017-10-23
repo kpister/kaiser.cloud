@@ -44,4 +44,8 @@ class Cloud < Roda
 
         # My post requests
     end
+
+    def pretty_date(date)
+        return "#{Date::ABBR_MONTHNAMES[date.month]}-#{date.day}"
+    end
 end

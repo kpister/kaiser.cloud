@@ -14,7 +14,7 @@
         </dl>
         <dl class="dib mr5">
             <dd class="f6 f5-ns b ml0">Most Recent Activity</dd>
-            <dd class="f3 f2-ns b ml0"><%= Date::ABBR_MONTHNAMES[@repo[:updated_at].month]+"-"+@repo[:updated_at].day.to_s %></dd>
+            <dd class="f3 f2-ns b ml0"><%= pretty_date @repo[:updated_at] %></dd>
         </dl>
         <dl class="dib mr5">
             <dd class="f6 f5-ns b ml0">Authors</dd>

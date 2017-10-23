@@ -14,7 +14,7 @@
             </dl>
             <dl class="dib mr5">
                 <dd class="f6 f5-ns b ml0">Most Recent Activity</dd>
-                <dd class="f3 f2-ns b ml0"><%= @info[:latest_commit] %></dd>
+                <dd class="f3 f2-ns b ml0"><%= pretty_date @info[:commits].first[:created_at] %></dd>
             </dl>
             <dl class="dib mr5">
                 <dd class="f6 f5-ns b ml0">Repo Count</dd>
@@ -118,11 +118,11 @@
             <tbody class="lh-copy">
                 <% @info[:commits].where(author: 'Kaiser Pister').limit(50).each do |commit| %>
                     <tr class="stripe-dark">
-                        <td class="pa3"><%= @info[:repos].where(id: commit[:repo_id]).first[:name] %></td>
+                        <td class="pa3"><%= @info[:repos].first(id: commit[:repo_id])[:name] %></td>
                         <td class="pa3"><%= (commit[:message].length > 30) ? commit[:message][0,27] + "..." : commit[:message] %></td>
-                        <td class="pa1"><%= Date::ABBR_MONTHNAMES[commit[:created_at].month]+"-"+commit[:created_at].day.to_s %></td>
+                        <td class="pa1"><%= pretty_date commit[:created_at] %></td>
                         <td class="pa3">
-                            <a href=<%="https://github.com/kpister/#{@info[:repos].where(id: commit[:repo_id]).first[:name]}/commit/#{commit[:sha]}"%> target="_blank"><%= commit[:sha][0,7] %></a> 
+                            <a href=<%="https://github.com/kpister/#{@info[:repos].first(id: commit[:repo_id])[:name]}/commit/#{commit[:sha]}"%> target="_blank"><%= commit[:sha][0,7] %></a> 
                         </td>
                     </tr>
                 <%end%>

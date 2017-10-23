@@ -119,11 +119,8 @@ def get_git_info
     db_repos = DB[:repos]
 
     {
-
         commits: db_commits,
         repos: db_repos,
-        repo_names: db_repos.map(:name),
-        latest_commit: "#{Date::ABBR_MONTHNAMES[db_commits.first[:created_at].month]}-#{db_commits.first[:created_at].day}"
-
+        repo_names: db_repos.map(:name).sort_by{ |rn| rn.downcase },
     }
 end

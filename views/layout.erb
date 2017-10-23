@@ -24,7 +24,7 @@
         <div class="container">
             <nav class="pa3 pa4-ns">
                 <a class="link dim black b f6 f5-ns dib mr3" href="/" title="Home">Repos: </a>
-                <% @info[:repo_names].sort_by{ |rn| rn.downcase }.each do |repo_name| %>
+                <% @info[:repo_names].each do |repo_name| %>
                     <a class="link dim gray    f6 f5-ns dib mr3" href= <%= "/gprojects/#{repo_name}" %>><%= repo_name %></a>
                 <% end %>
             </nav>
