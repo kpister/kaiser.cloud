@@ -96,10 +96,10 @@ def update_repo_info
             end
 
             if record
-                repo.update(languages: languages.keys.to_s)
-                repo.update(authors: authors.to_s)
-                repo.update(stars: repo['stargazers_count'])
-                repo.update(updated_at: repo['pushed_at'])
+                record.update(languages: languages.keys.to_s)
+                record.update(authors: authors.to_s)
+                record.update(stars: repo['stargazers_count'])
+                record.update(updated_at: repo['pushed_at'])
             else
                 db_repos.insert(id: repo['id'], 
                                 name: repo['name'], 
