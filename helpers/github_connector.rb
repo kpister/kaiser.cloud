@@ -29,36 +29,10 @@ end
 def prevent_repeat(hash, key, item)
     hash.each do |record|
         if record[key.to_sym] == item
-            return record
+            return true 
         end
     end
-    return nil
-end
-
-def add_readme(project)
-    # implement logic to check if I need to make a pull -- via recent commits/time
-    # only store description, authors, todo
-    readme = call_url("https://api.github.com/repos/kpister/#{project}/readme", true)
-    DB[:repos].where(name: project).update(readme: readme)
-    return readme
-end
-
-def update_commit_info
-    db_commits = DB[:commits]
-    commits_body = call_url('https://api.github.com/users/kpister/events')
-    commits_body&.each do |event|
-        if event['payload'] && event['payload']['commits']
-            event['payload']['commits'].reverse.each do |commit|
-                unless prevent_repeat(db_commits, 'sha', commit['sha'])
-                    db_commits.insert(message: commit['message'], 
-                                created_at: Time.parse(event['created_at']), 
-                                sha: commit['sha'], 
-                                repo_id: event['repo']['id'],
-                                author: "Kaiser")
-                end
-            end
-        end
-    end
+    return false
 end
 
 def update_repo_info
@@ -72,14 +46,15 @@ def update_repo_info
         # ... that I have starred
         if repo['stargazers_count'] > 0
             # check if it exists already
-            record = prevent_repeat(db_repos, 'id', repo['id'])
+            exists = prevent_repeat(db_repos, :id, repo['id'])
 
             # update languages, authors and commits
+            #readme = call_url("https://api.github.com/repos/kpister/#{project}/readme", true)
             languages = call_url("https://api.github.com/repos/kpister/#{repo['name']}/languages")
             contributors = call_url("https://api.github.com/repos/kpister/#{repo['name']}/contributors")
             commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits")
             commits.each do |commit|
-                unless prevent_repeat(db_commits, 'sha', commit['sha'])
+                unless prevent_repeat(db_commits, :sha, commit[:sha])
                     db_commits.insert(
                         message: commit['commit']['message'],
                         sha: commit['sha'],
@@ -95,17 +70,16 @@ def update_repo_info
                 authors << contributor["login"] if contributor['contributions'] > 2
             end
 
-            if record
-                record.update(languages: languages.keys.to_s)
-                record.update(authors: authors.to_s)
-                record.update(stars: repo['stargazers_count'])
-                record.update(updated_at: repo['pushed_at'])
+            if exists
+                db_repos.where(id: repo['id']).update(languages: languages.keys.to_s)
+                db_repos.where(id: repo['id']).update(authors: authors.to_s)
+                db_repos.where(id: repo['id']).update(stars: repo['stargazers_count'])
+                db_repos.where(id: repo['id']).update(name: repo['name'])
             else
                 db_repos.insert(id: repo['id'], 
                                 name: repo['name'], 
                                 languages: languages.keys.to_s.tr('[]"', ''),
                                 stars: repo['stargazers_count'],
-                                updated_at: repo['pushed_at'],
                                 authors: authors.to_s.tr('[]"', ''))
             end
         end

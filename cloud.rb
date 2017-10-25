@@ -37,7 +37,7 @@ class Cloud < Roda
 
             r.is "gprojects", String do |project|
                 @repo = DB[:repos].where(name: project).first
-                @commits = DB[:commits].where(repo_id: @repo[:id])
+                @commits = DB[:commits].where(repo_id: @repo[:id]).order(:created_at).reverse
                 view('project')
             end
         end
