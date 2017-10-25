@@ -54,7 +54,7 @@ def update_repo_info
             contributors = call_url("https://api.github.com/repos/kpister/#{repo['name']}/contributors")
             commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits")
             commits.each do |commit|
-                unless prevent_repeat(db_commits, :sha, commit[:sha])
+                unless prevent_repeat(db_commits, 'sha', commit['sha'])
                     db_commits.insert(
                         message: commit['commit']['message'],
                         sha: commit['sha'],
