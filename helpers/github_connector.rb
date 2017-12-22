@@ -67,7 +67,10 @@ def update_repo_info
 
             authors = []
             contributors.each do |contributor|
-                authors << contributor["login"] if contributor['contributions'] > 2
+                # only count contributors with > 25%?
+                # only include top 3?
+                # top 2 + me?
+                authors << contributor["login"] if contributor['contributions'].to_f / commits.count > 0.25
             end
 
             if exists
