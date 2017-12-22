@@ -30,11 +30,6 @@ task :migrate => "migrate:up"
 
 namespace :update do
     namespace :github do
-        desc "Update github commit history"
-        task :commits do
-            update_commit_info
-        end
-
         desc "Update github repos"
         task :repos do
             update_repo_info
@@ -42,3 +37,5 @@ namespace :update do
     end
 end
 
+desc "Update"
+task :update => "update:github:repos"

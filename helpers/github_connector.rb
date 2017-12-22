@@ -49,7 +49,7 @@ def update_repo_info
             exists = prevent_repeat(db_repos, :id, repo['id'])
 
             # update languages, authors and commits
-            #readme = call_url("https://api.github.com/repos/kpister/#{project}/readme", true)
+            readme = call_url("https://api.github.com/repos/kpister/#{repo['name']}/readme", true)
             languages = call_url("https://api.github.com/repos/kpister/#{repo['name']}/languages")
             contributors = call_url("https://api.github.com/repos/kpister/#{repo['name']}/contributors")
             commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits")
@@ -67,23 +67,27 @@ def update_repo_info
 
             authors = []
             contributors.each do |contributor|
-                # only count contributors with > 25%?
-                # only include top 3?
-                # top 2 + me?
                 authors << contributor["login"] if contributor['contributions'].to_f / commits.count > 0.25
             end
 
+            readme_pieces = parse_readme(readme)
             if exists
-                db_repos.where(id: repo['id']).update(languages: languages.keys.to_s)
-                db_repos.where(id: repo['id']).update(authors: authors.to_s)
+                db_repos.where(id: repo['id']).update(languages: languages.keys.to_s.tr('[]"', ''))
+                db_repos.where(id: repo['id']).update(authors: authors.to_s.tr('[]"', ''))
                 db_repos.where(id: repo['id']).update(stars: repo['stargazers_count'])
                 db_repos.where(id: repo['id']).update(name: repo['name'])
+                db_repos.where(id: repo['id']).update(desc: readme_pieces[0])
+                db_repos.where(id: repo['id']).update(todo: readme_pieces[1])
+                db_repos.where(id: repo['id']).update(tags: readme_pieces[2])
             else
                 db_repos.insert(id: repo['id'], 
                                 name: repo['name'], 
                                 languages: languages.keys.to_s.tr('[]"', ''),
                                 stars: repo['stargazers_count'],
-                                authors: authors.to_s.tr('[]"', ''))
+                                authors: authors.to_s.tr('[]"', ''),
+                                desc: readme_pieces[0],
+                                todo: readme_pieces[1],
+                                tags: read_pieces[2])
             end
         end
     end
@@ -100,4 +104,26 @@ def get_git_info
         repos: db_repos,
         repo_names: db_repos.map(:name).sort_by{ |rn| rn.downcase },
     }
+end
+
+def parse_readme(readme)
+    text = Hash.new
+    current = ""
+    first = ""
+    readme.each_line do |line|
+        if line[0] == "#"
+            current = line.strip.tr('#', '').tr(' ', '').downcase
+            if first == ""
+                first = current
+            end
+            text[current] = ""
+        else
+            if text[current]
+                text[current] += line
+            else
+                text[current] = line
+            end
+        end
+    end
+    return text[first], text['todo'], text['tags']
 end
