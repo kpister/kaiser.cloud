@@ -89,6 +89,7 @@ def update_commits(db_commits, repo)
             )
         end
     end
+    return commits.count
 end
 
 
@@ -119,9 +120,9 @@ def update_repo_info(readme=true, authors=true, languages=true, commits=true)
 
             # update languages, authors and commits
             update_readme(db_repos, repo) if readme
-            update_authors(db_repos, repo, commits.count) if authors
+            commit_count = update_commits(db_commits, repo) if commits
+            update_authors(db_repos, repo, commit_count) if authors
             update_languages(db_repos, repo) if languages
-            update_commits(db_commits, repo) if commits
         end
     end
 end
