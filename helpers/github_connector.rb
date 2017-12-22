@@ -51,7 +51,7 @@ end
 
 def update_authors(db_repos, repo, commit_count)
     contributors = call_url("https://api.github.com/repos/kpister/#{repo['name']}/contributors")
-    if authors == 'error'
+    if contributors == 'error'
         puts "Authors error encountered"
         return
     end
