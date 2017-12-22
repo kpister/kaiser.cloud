@@ -1,9 +1,9 @@
-<article class="cf">
+<article class="cf h-100">
 <div class="fl w-100 w-70-l bg-near-white tc">
 
     <!-- The stats block at the top -->
     <article class="pa3 pa5-ns" data-name="slab-stat">
-        <h1><%= @repo[:name] %></h1>
+        <h1><a class="black-90" href=<%="https://github.com/kpister/#{@repo[:name]}"%>><%= @repo[:name] %></a></h1>
         <dl class="dib mr5">
             <dd class="f6 f5-ns b ml0">Total Commits</dd>
             <dd class="f3 f2-ns b ml0"><%= @commits.count %></dd>
@@ -27,12 +27,37 @@
     </article>
 
     <section class="cf">
-        <div class="fl w-100 w-33-l bg-near-white tc ph1">
+        <div class="fl w-100 w-40-l bg-near-white tc ph1">
             <article class="mw6 center bg-white br3 pa3 pa4-ns mv3 ba b--black-10">
+                <h1 class="fw6 f3 lh-copy mt0">
+                    Todo List
+                </h1>
+                <% @repo[:todo].each_line.with_index do |line, index| %>
+                    <% if line == "Project is finished for now" %> 
+                        <p class="lh-copy measure center f4 black-70">
+                            This project is done for now!
+                        </p>
+                        <img src="../images/done.png">
+                    <% else %>
+                        <% if index < 35 %>
+                            <p class="lh-copy measure tl f4 black-70">
+                                <u><%= line[0..1] %></u>
+                                <%= (line.length > 45) ? line[2..42] + "..." : line[2..-1] %>
+                            </p>
+                        <% end %>
+                    <% end %>
+                <% end %>
+            </article>
+        </div>
+        <div class="fl w-100 w-60-l bg-near-white tc ph1">
+            <article class="center bg-white br3 pa3 pa4-ns mv3 ba b--black-10">
                 <p class="lh-copy measure center f4 black-70">
-                    <%= @repo[:todo] %>
+                    <%= @repo[:desc] %>
                 </p>
             </article>
+            <% @repo[:tags].each_line(", ") do |tag| %>
+                <img src=<%= "../images/#{tag.downcase.tr(", ", '')}.png"%> class="h5 w5 dib" title=<%= tag.tr(", ", '') %>>
+            <% end %>
         </div>
     </section>
 

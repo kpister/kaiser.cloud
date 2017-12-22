@@ -10,4 +10,4 @@ An experiment in full stack web development as well as an exposition of my work 
 
 #### Tags
 
-web, ruby, personal
+web, ruby

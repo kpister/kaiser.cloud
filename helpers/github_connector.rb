@@ -7,7 +7,7 @@ require_relative '../db'
 
 def call_url(url, raw=false)
     uri = URI.parse(url)
-    respones = ""
+    response = ""
     if raw
         request = Net::HTTP::Get.new(uri)
         request["Accept"] = "application/vnd.github.v3.raw+json"
@@ -19,11 +19,13 @@ def call_url(url, raw=false)
         response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
           http.request(request)
         end
-        response.code == "200" ? response.body : ["error"]
+        return response.body if response.code == "200"
     else 
         response = Net::HTTP.get_response(uri)
-        response.code == "200" ? JSON.parse(response.body) : ["error"]
+        return JSON.parse(response.body) if response.code == "200"
     end
+    puts response.body.to_s
+    return "error"
 end
 
 def prevent_repeat(hash, key, item)
@@ -35,11 +37,70 @@ def prevent_repeat(hash, key, item)
     return false
 end
 
-def update_repo_info
+def update_readme(db_repos, repo)
+    readme = parse_readme(call_url("https://api.github.com/repos/kpister/#{repo['name']}/readme", true))
+    if readme == 'error'
+        puts "Readme error encountered"
+        return
+    end
+
+    db_repos.where(id: repo['id']).update(desc: readme[:desc])
+    db_repos.where(id: repo['id']).update(todo: readme[:todo])
+    db_repos.where(id: repo['id']).update(tags: readme[:tags])
+end
+
+def update_authors(db_repos, repo, commit_count)
+    contributors = call_url("https://api.github.com/repos/kpister/#{repo['name']}/contributors")
+    if authors == 'error'
+        puts "Authors error encountered"
+        return
+    end
+
+    authors = []
+    contributors.each do |contributor|
+        authors << contributor["login"] if contributor['contributions'].to_f / commit_count > 0.25
+    end
+    db_repos.where(id: repo['id']).update(authors: authors.to_s.tr('[]"', ''))
+end 
+
+def update_languages(db_repos, repo)
+    languages = call_url("https://api.github.com/repos/kpister/#{repo['name']}/languages")
+    if languages == 'error'
+        puts "Languages error encountered"
+        return
+    end
+    db_repos.where(id: repo['id']).update(languages: languages.keys.to_s.tr('[]"', ''))
+end
+
+def update_commits(db_commits, repo)
+    commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits")
+    if commits == 'error'
+        puts "Commits error encountered"
+        return
+    end
+    commits.each do |commit|
+        unless prevent_repeat(db_commits, 'sha', commit['sha'])
+            db_commits.insert(
+                message: commit['commit']['message'],
+                sha: commit['sha'],
+                repo_id: repo['id'],
+                created_at: commit['commit']['author']['date'],
+                author: commit['commit']['author']['name']
+            )
+        end
+    end
+end
+
+
+def update_repo_info(readme=true, authors=true, languages=true, commits=true)
     db_repos = DB[:repos]
     db_commits = DB[:commits]
 
     repo_body = call_url('https://api.github.com/users/kpister/repos')
+    if repo_body == 'error'
+        puts "Repo error encountered"
+        return
+    end
 
     # for every repo...
     repo_body.each do |repo|
@@ -47,48 +108,20 @@ def update_repo_info
         if repo['stargazers_count'] > 0
             # check if it exists already
             exists = prevent_repeat(db_repos, :id, repo['id'])
-
-            # update languages, authors and commits
-            readme = call_url("https://api.github.com/repos/kpister/#{repo['name']}/readme", true)
-            languages = call_url("https://api.github.com/repos/kpister/#{repo['name']}/languages")
-            contributors = call_url("https://api.github.com/repos/kpister/#{repo['name']}/contributors")
-            commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits")
-            commits.each do |commit|
-                unless prevent_repeat(db_commits, 'sha', commit['sha'])
-                    db_commits.insert(
-                        message: commit['commit']['message'],
-                        sha: commit['sha'],
-                        repo_id: repo['id'],
-                        created_at: commit['commit']['author']['date'],
-                        author: commit['commit']['author']['name']
-                    )
-                end
-            end
-
-            authors = []
-            contributors.each do |contributor|
-                authors << contributor["login"] if contributor['contributions'].to_f / commits.count > 0.25
-            end
-
-            readme_pieces = parse_readme(readme)
-            if exists
-                db_repos.where(id: repo['id']).update(languages: languages.keys.to_s.tr('[]"', ''))
-                db_repos.where(id: repo['id']).update(authors: authors.to_s.tr('[]"', ''))
-                db_repos.where(id: repo['id']).update(stars: repo['stargazers_count'])
-                db_repos.where(id: repo['id']).update(name: repo['name'])
-                db_repos.where(id: repo['id']).update(desc: readme_pieces[0])
-                db_repos.where(id: repo['id']).update(todo: readme_pieces[1])
-                db_repos.where(id: repo['id']).update(tags: readme_pieces[2])
-            else
+            if !exists
                 db_repos.insert(id: repo['id'], 
                                 name: repo['name'], 
-                                languages: languages.keys.to_s.tr('[]"', ''),
-                                stars: repo['stargazers_count'],
-                                authors: authors.to_s.tr('[]"', ''),
-                                desc: readme_pieces[0],
-                                todo: readme_pieces[1],
-                                tags: read_pieces[2])
+                                stars: repo['stargazers_count'])
+            else
+                db_repos.where(id: repo['id']).update(stars: repo['stargazers_count'])
+                db_repos.where(id: repo['id']).update(name: repo['name'])
             end
+
+            # update languages, authors and commits
+            update_readme(db_repos, repo) if readme
+            update_authors(db_repos, repo, commits.count) if authors
+            update_languages(db_repos, repo) if languages
+            update_commits(db_commits, repo) if commits
         end
     end
 end
@@ -125,5 +158,29 @@ def parse_readme(readme)
             end
         end
     end
-    return text[first], text['todo'], text['tags']
+    {
+        desc: parse_desc(text[first]), 
+        todo: parse_todo(text['todo']),
+        tags: parse_tags(text['tags']),
+    }
+end
+
+def parse_desc(desc)
+    return desc
+end
+
+def parse_todo(todo)
+    if todo
+        return todo.gsub(/\* - /, "\n").gsub(/\[x\]/, "x:").gsub(/\[ \]/, "_:")
+    else
+        return "Project is finished for now"
+    end
+end
+
+def parse_tags(tags)
+    if tags
+        return tags.strip
+    else
+        return "notags"
+    end
 end

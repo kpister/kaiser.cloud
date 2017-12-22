@@ -31,11 +31,31 @@ task :migrate => "migrate:up"
 namespace :update do
     namespace :github do
         desc "Update github repos"
-        task :repos do
+        task :all do
             update_repo_info
+        end
+
+        desc "Update github repos readmes"
+        task :readme do
+            update_repo_info(true, false, false, false)
+        end
+
+        desc "Update github repos languages"
+        task :languages do
+            update_repo_info(false, true, false, false)
+        end
+
+        desc "Update github repos authors"
+        task :authors do
+            update_repo_info(false, false, true, false)
+        end
+
+        desc "Update github repos commits"
+        task :commits do
+            update_repo_info(false, false, false, true)
         end
     end
 end
 
 desc "Update"
-task :update => "update:github:repos"
+task :update => "update:github:all"
