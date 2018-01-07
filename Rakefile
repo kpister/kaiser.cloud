@@ -37,22 +37,27 @@ namespace :update do
 
         desc "Update github repos readmes"
         task :readme do
-            update_repo_info(true, false, false, false)
+            update_repo_info(readme: true)
         end
 
         desc "Update github repos languages"
         task :languages do
-            update_repo_info(false, true, false, false)
+            update_repo_info(languages: true)
         end
 
         desc "Update github repos authors"
         task :authors do
-            update_repo_info(false, false, true, false)
+            update_repo_info(authors: true)
         end
 
         desc "Update github repos commits"
         task :commits do
-            update_repo_info(false, false, false, true)
+            update_repo_info(commits: true)
+        end
+
+        desc "Get old github repo commits"
+        task :old do
+            update_repo_info(old: true)
         end
     end
 end

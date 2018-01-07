@@ -71,7 +71,7 @@ def update_languages(db_repos, repo)
 end
 
 def update_commits(db_commits, repo)
-    commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits?since=2017-01-01T00:00:00Z")
+    commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits")
     if commits == 'error'
         puts "Commits error encountered"
         return
@@ -90,8 +90,27 @@ def update_commits(db_commits, repo)
     return commits.count
 end
 
+def get_old_commits(db_commits, repo)
+    commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits?page=2")
+    if commits == 'error'
+        puts "Commits error encountered"
+        return
+    end
+    commits.each do |commit|
+        unless prevent_repeat(db_commits, 'sha', commit['sha'])
+            db_commits.insert(
+                message: commit['commit']['message'],
+                sha: commit['sha'],
+                repo_id: repo['id'],
+                created_at: commit['commit']['author']['date'],
+                author: commit['commit']['author']['name']
+            )
+        end
+    end
+end
 
-def update_repo_info(readme=true, authors=true, languages=true, commits=true)
+
+def update_repo_info(readme: true, authors: true, languages: true, commits: true, old: false)
     db_repos = DB[:repos]
     db_commits = DB[:commits]
 
@@ -119,6 +138,7 @@ def update_repo_info(readme=true, authors=true, languages=true, commits=true)
             # update languages, authors and commits
             update_readme(db_repos, repo) if readme
             commit_count = update_commits(db_commits, repo) if commits
+            get_old_commits(db_commits, repo) if old
             update_authors(db_repos, repo, commit_count) if authors
             update_languages(db_repos, repo) if languages
         end
