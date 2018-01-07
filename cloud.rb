@@ -13,6 +13,7 @@ class Cloud < Roda
         r.public 
         @info ||= get_git_info
         @author = 'Kaiser'
+        @languages = 'Go, Ruby, C++'
 
         r.root do
             view('homepage')

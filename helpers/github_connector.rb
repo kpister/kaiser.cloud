@@ -5,24 +5,22 @@ require 'time'
 require 'sequel'
 require_relative '../db'
 
-def call_url(url, raw=false)
+def call_url(url, raw: false)
     uri = URI.parse(url)
     response = ""
-    if raw
-        request = Net::HTTP::Get.new(uri)
-        request["Accept"] = "application/vnd.github.v3.raw+json"
-        
-        req_options = {
-          use_ssl: uri.scheme == "https",
-        }
-        
-        response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-          http.request(request)
-        end
-        return response.body if response.code == "200"
-    else 
-        response = Net::HTTP.get_response(uri)
-        return JSON.parse(response.body) if response.code == "200"
+    request = Net::HTTP::Get.new(uri)
+    request["Accept"] = "application/vnd.github.v3.raw+json" if raw
+    
+    req_options = {
+        use_ssl: uri.scheme == "https",
+    }
+    
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+        http.request(request)
+    end
+    
+    if response.code == '200'
+        return (raw ? response.body : JSON.parse(response.body))
     end
     puts response.body.to_s
     return "error"
@@ -38,7 +36,7 @@ def prevent_repeat(hash, key, item)
 end
 
 def update_readme(db_repos, repo)
-    readme = parse_readme(call_url("https://api.github.com/repos/kpister/#{repo['name']}/readme", true))
+    readme = parse_readme(call_url("https://api.github.com/repos/kpister/#{repo['name']}/readme", raw: true))
     if readme == 'error'
         puts "Readme error encountered"
         return
@@ -73,7 +71,7 @@ def update_languages(db_repos, repo)
 end
 
 def update_commits(db_commits, repo)
-    commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits")
+    commits = call_url("https://api.github.com/repos/kpister/#{repo['name']}/commits?since=2017-01-01T00:00:00Z")
     if commits == 'error'
         puts "Commits error encountered"
         return
