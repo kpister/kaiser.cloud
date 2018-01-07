@@ -41,8 +41,8 @@
                     <% else %>
                         <% if index < 35 %>
                             <p class="lh-copy measure tl f4 black-70">
-                                <u><%= line[0..1] %></u>
-                                <%= (line.length > 45) ? line[2..42] + "..." : line[2..-1] %>
+                                <u><%= line[0] %></u>
+                                <%= (line.length > 45) ? line[1..42] + "..." : line[1..-1] %>
                             </p>
                         <% end %>
                     <% end %>

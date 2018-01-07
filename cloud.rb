@@ -12,6 +12,7 @@ class Cloud < Roda
     route do |r|
         r.public 
         @info ||= get_git_info
+        @author = 'Kaiser'
 
         r.root do
             view('homepage')
