@@ -137,8 +137,9 @@ def update_repo_info(readme: true, authors: true, languages: true, commits: true
 
             # update languages, authors and commits
             update_readme(db_repos, repo) if readme
-            commit_count = update_commits(db_commits, repo) if commits
+            update_commits(db_commits, repo) if commits
             get_old_commits(db_commits, repo) if old
+            commit_count = db_commits.where(repo_id: repo['id']).count
             update_authors(db_repos, repo, commit_count) if authors
             update_languages(db_repos, repo) if languages
         end
