@@ -8,12 +8,15 @@ class Cloud < Roda
     plugin :head
     plugin :public
     plugin :static ['/images'], root: 'public'
+    plugin :header_matchers
 
     route do |r|
         r.public 
         @info ||= get_git_info
         @author = 'Kaiser'
         @languages = 'Go, Ruby, C++'
+
+        puts env['HTTP_GO_TIME'] if env['HTTP_GO_TIME']
 
         r.root do
             view('homepage')
