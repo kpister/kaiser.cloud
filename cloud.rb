@@ -1,6 +1,7 @@
 require 'roda'
 require_relative 'models'
 require_relative 'helpers/github_connector.rb'
+require_relative 'helpers/webprime.rb'
 
 class Cloud < Roda
     opts[:root] = File.dirname(__FILE__)
@@ -33,8 +34,30 @@ class Cloud < Roda
                 r.redirect 'https://bitbucket.org/kpister'
             end
 
-            r.is 'math', Integer, Integer do |a, b|
-                "#{a + b}"
+            r.on 'ws' do
+                r.is do
+                    db_ws = DB[:workstations]
+                    @ws = db_ws.insert(tape: '0', history: '', 
+                                    instruction_ptr: 0,
+                                    data_ptr: 0)
+                    puts @ws
+                    view('welcome')
+                end
+
+                r.is Integer do |id|
+                    @ws = DB[:workstations].where(id: id).first
+                    view('workstation')
+                end
+
+                r.is Integer, String do |id, command|
+                    #Remove command / Undo command
+                    #Rerun code
+                    @ws = DB[:workstations].where(id: id).first
+                    @ws, @error = handle_command(@ws, command)
+                    DB[:workstations].where(id: id).update(instruction_ptr: @ws[:instruction_ptr],
+                                                        data_ptr: @ws[:data_ptr], tape: @ws[:tape], history: @ws[:history])
+                    view('workstation')
+                end
             end
 
             r.is "gprojects", String do |project|
