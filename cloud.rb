@@ -9,7 +9,7 @@ class Cloud < Roda
     plugin :public
     plugin :static ['/images'], root: 'public'
     plugin :static ['/scripts'], root: 'public'
-    plugin :default_header, "Access-Control-Allow-Origin"=>"https://trevorelwell.me"
+    plugin :default_headers, "Access-Control-Allow-Origin"=>"*"
 
     route do |r|
         r.public 
