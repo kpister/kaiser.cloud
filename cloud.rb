@@ -8,6 +8,7 @@ class Cloud < Roda
     plugin :head
     plugin :public
     plugin :static ['/images'], root: 'public'
+    plugin :static ['/scripts'], root: 'public'
 
     route do |r|
         r.public 
