@@ -9,10 +9,10 @@ class Cloud < Roda
     plugin :public
     plugin :static ['/images'], root: 'public'
     plugin :static ['/scripts'], root: 'public'
-    plugin :default_headers, "Access-Control-Allow-Origin"=>"*"
+    plugin :static ['/papers'], root: 'public'
 
     route do |r|
-        r.public 
+        r.public
         @info ||= get_git_info
         @author = 'Kaiser'
         @languages = 'Go, Ruby, C++'
